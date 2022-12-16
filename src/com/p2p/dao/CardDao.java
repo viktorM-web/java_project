@@ -1,6 +1,9 @@
 package com.p2p.dao;
 
+import com.p2p.dto.CardFilter;
+import com.p2p.dto.UserFilter;
 import com.p2p.entity.Card;
+import com.p2p.entity.User;
 import com.p2p.exeption.DaoException;
 import com.p2p.util.ConnectionManager;
 import com.p2p.util.Currency;
@@ -12,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CardDao implements Dao<Long, Card> {
 
@@ -49,6 +53,49 @@ public class CardDao implements Dao<Long, Card> {
             """;
 
     private CardDao() {
+    }
+
+    public List<Card> findAll(CardFilter filter) {
+        List<Object> parameters = new ArrayList<>();
+        List<String> whereSql = new ArrayList<>();
+        if (filter.owner() != null) {
+            whereSql.add("owner = ?");
+            parameters.add(filter.owner().getId());
+        }
+        if (filter.validityWithCondition() != null) {
+            whereSql.add("validity " + filter.validityWithCondition().first() + " ?");
+            parameters.add(filter.validityWithCondition().second());
+        }
+        if (filter.balanceWithCondition() != null) {
+            whereSql.add("balance " + filter.balanceWithCondition().first() + " ?");
+            parameters.add(filter.balanceWithCondition().second());
+        }
+        if (filter.currency() != null) {
+            whereSql.add("currency = ?");
+            parameters.add(filter.currency().name());
+        }
+        parameters.add(filter.limit());
+        parameters.add(filter.offset());
+        var where = whereSql.stream()
+                .collect(Collectors.joining(" AND ", " WHERE ", " LIMIT ? OFFSET ? "));
+        if (whereSql.isEmpty()) {
+            where = where.replaceAll("WHERE", "");
+        }
+        var sql = FIND_ALL_SQL + where;
+        try (var connection = ConnectionManager.get();
+             var preparedStatement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < parameters.size(); i++) {
+                preparedStatement.setObject(i + 1, parameters.get(i));
+            }
+            var resultSet = preparedStatement.executeQuery();
+            List<Card> result = new ArrayList<>();
+            while (resultSet.next()) {
+                result.add(createCard(resultSet));
+            }
+            return result;
+        } catch (SQLException throwables) {
+            throw new DaoException(throwables);
+        }
     }
 
     @Override
