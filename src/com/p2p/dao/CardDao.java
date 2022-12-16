@@ -1,9 +1,7 @@
 package com.p2p.dao;
 
 import com.p2p.dto.CardFilter;
-import com.p2p.dto.UserFilter;
 import com.p2p.entity.Card;
-import com.p2p.entity.User;
 import com.p2p.exeption.DaoException;
 import com.p2p.util.ConnectionManager;
 import com.p2p.util.Currency;

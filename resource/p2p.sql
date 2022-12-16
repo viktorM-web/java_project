@@ -49,9 +49,9 @@ CREATE TABLE offer
 (
     id                SERIAL PRIMARY KEY,
     supplier          INT REFERENCES user_p2p (id),
-    sum               INT      NOT NULL,
+    sum               NUMERIC      NOT NULL,
     currency          VARCHAR(5) NOT NULL,
-    price             INT      NOT NULL,
+    price             NUMERIC      NOT NULL,
     expected_currency VARCHAR(5) NOT NULL,
     publication       DATE     NOT NULL,
     operation         VARCHAR(5)
