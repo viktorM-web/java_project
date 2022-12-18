@@ -7,7 +7,6 @@ import com.p2p.util.Pair;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
 public record CardFilter(
         int limit,
         int offset,

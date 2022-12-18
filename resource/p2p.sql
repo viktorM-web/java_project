@@ -17,8 +17,8 @@ CREATE TABLE card
 (
     id_number BIGINT PRIMARY KEY,
     owner     INT REFERENCES user_p2p (id),
-    validity  DATE NOT NULL,
-    balance   NUMERIC  NOT NULL,
+    validity  DATE    NOT NULL,
+    balance   NUMERIC NOT NULL,
     currency  VARCHAR(5)
 );
 
@@ -33,14 +33,16 @@ CREATE TABLE wallet_content
     id             SERIAL PRIMARY KEY,
     id_number      VARCHAR REFERENCES crypto_wallet (id_number),
     cryptocurrency VARCHAR(5),
-    amount         INT
-
+    amount         NUMERIC,
+    UNIQUE (id_number, cryptocurrency)
 );
+
 CREATE TABLE address_wallet
 (
-    id      INT REFERENCES wallet_content (id),
-    net     VARCHAR NOT NULL,
-    address VARCHAR NOT NULL
+    id                SERIAL PRIMARY KEY,
+    id_wallet_content INT REFERENCES wallet_content (id),
+    net               VARCHAR NOT NULL,
+    address           VARCHAR NOT NULL
 );
 
 -- CREATE TYPE OPERATION AS ENUM ('SELL', 'BUY');
@@ -49,11 +51,11 @@ CREATE TABLE offer
 (
     id                SERIAL PRIMARY KEY,
     supplier          INT REFERENCES user_p2p (id),
-    sum               NUMERIC      NOT NULL,
+    sum               NUMERIC    NOT NULL,
     currency          VARCHAR(5) NOT NULL,
-    price             NUMERIC      NOT NULL,
+    price             NUMERIC    NOT NULL,
     expected_currency VARCHAR(5) NOT NULL,
-    publication       DATE     NOT NULL,
+    publication       DATE       NOT NULL,
     operation         VARCHAR(5)
 );
 
@@ -61,8 +63,8 @@ CREATE TABLE offer
 
 CREATE TABLE transaction
 (
-    id        SERIAL PRIMARY KEY,
-    offer     INT REFERENCES offer (id),
-    consumer  INT REFERENCES user_p2p (id),
-    condition VARCHAR(5) NOT NULL
+    id       SERIAL PRIMARY KEY,
+    offer    INT REFERENCES offer (id),
+    consumer INT REFERENCES user_p2p (id),
+    status   VARCHAR(5) NOT NULL
 );

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class OfferDao implements Dao<Integer, Offer>{
+public class OfferDao implements Dao<Integer, Offer> {
 
     private static final OfferDao INSTANCE = new OfferDao();
     private static final UserDao USER_DAO = UserDao.getInstance();
@@ -223,11 +223,10 @@ public class OfferDao implements Dao<Integer, Offer>{
                 Currency.getCurrency(resultSet.getString("Expected_currency")).orElse(null),
                 resultSet.getDate("publication").toLocalDate(),
                 Operation.getOperation(resultSet.getString("operation")).orElse(null)
-
         );
     }
 
-    public static OfferDao getInstance(){
+    public static OfferDao getInstance() {
         return INSTANCE;
     }
 }
